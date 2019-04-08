@@ -34,10 +34,10 @@ class Bot():
         the user's chat_id (int) or the username (string) of the target
         channel (in the format @channelusername)
         '''
-        data = {}
-        data['chat_id'] = to
-        data['text'] = msg
-        return requests.post(self.get_url("sendMessage"), data=data)
+        return requests.post(self.get_url("sendMessage"), data={
+            'chat_id': to,
+            'text': msg
+        })
 
     ###########################################################################
     # webhook
