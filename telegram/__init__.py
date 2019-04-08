@@ -18,13 +18,15 @@ class Bot():
            the respective bot token given by BotFather
     '''
 
+    def __init__(self, token):
+        self._token = token
+
     @property
     def token(self):
         '''
-        Returns the value of the environment variable
-        'TELEGRAM_BOT_TOKEN'.
+        Returns the bot's token (previously set in __init__).
         '''
-        return env['TELEGRAM_BOT_TOKEN']
+        return self._token
 
     ###########################################################################
     # webhook
