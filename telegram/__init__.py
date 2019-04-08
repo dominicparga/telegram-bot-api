@@ -67,6 +67,16 @@ class Bot():
         '''
         return requests.get(self.get_url('setWebhook'), data={'url': url})
 
+    def set_webhook_root(self, url):
+        '''
+        Sets the webhook of this bot so incoming updates will be
+        forwarded to it.
+        Adds the bot's token after the given 'url'.
+        '''
+        return requests.get(self.get_url('setWebhook'), data={
+            'url': f'{url}/{self.token}'
+        })
+
     ###########################################################################
     # utils
 
