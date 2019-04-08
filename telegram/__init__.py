@@ -28,6 +28,17 @@ class Bot():
         '''
         return self._token
 
+    def send_msg(self, msg, to):
+        '''
+        Sends the given message 'msg' to the user 'to', where 'to' is
+        the user's chat_id (int) or the username (string) of the target
+        channel (in the format @channelusername)
+        '''
+        data = {}
+        data['chat_id'] = to
+        data['text'] = msg
+        return requests.post(self.get_url("sendMessage"), data=data)
+
     ###########################################################################
     # webhook
 
