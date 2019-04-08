@@ -7,7 +7,7 @@ Setup script for telegram-python project.
 from setuptools import setup
 
 setup(
-    name='dominicparga_telegram',
+    name='telegram',
     version='0.1',
     description='Telegram Bot API wrapper',
     url='https://github.com/dominicparga/telegram-python',
