@@ -46,7 +46,7 @@ class Bot():
     def webhook_info(self):
         '''
         Returns the webhook info provided by Telegram Bot API in json
-        format (string).
+        format (as python dict).
         '''
         return requests.get(self.get_url('getWebhookInfo')).json()
 
