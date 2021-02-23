@@ -3,8 +3,6 @@ This module provides general access to the official Telegram Bot API by
 implementing useful functions.
 '''
 
-from os import environ as env
-
 import requests
 
 class Bot():
