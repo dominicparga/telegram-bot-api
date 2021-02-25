@@ -5,78 +5,75 @@ implementing useful functions.
 
 import requests
 
+class SupportedMethod:
+  SEND_MSG = 'sendMessage'
+  GET_WEBHOOK_INFO = 'getWebhookInfo'
+  SET_WEBHOOK = 'setWebhook'
+
+
+class Webhook:
+  def __init__(self, token):
+    self._token = token
+
+  @property
+  def token(self):
+    return self._token
+
+  def url_for(self, method):
+    '''
+    Helper method to access the Telegram Bot API.
+    '''
+    return "https://api.telegram.org/bot{}/{}".format(
+      self._token,
+      method)
+
+  @property
+  def info(self):
+    '''
+    Returns the webhook info provided by Telegram Bot API in json
+    format (as python dict).
+    '''
+    url = self.url_for(SupportedMethod.GET_WEBHOOK_INFO)
+    return requests.get(url).json()
+
+  @property
+  def url(self):
+    '''
+    Returns the webhook url (string).
+    '''
+    return self.info['result']['url']
+
+  def set_url_adding_token(self, base_url):
+    '''
+    Sets the webhook of this bot so incoming updates will be
+    forwarded to it.
+    Adds the bot's token after the given 'url'.
+    '''
+    api_url = self.url_for(SupportedMethod.SET_WEBHOOK)
+    return requests.get(api_url, data={'url': f'{base_url}/{self.token}'})
+
+
+
 class Bot():
+  def __init__(self, token):
+    self._webhook = Webhook(token)
+
+  @property
+  def webhook(self):
+    return self._webhook
+
+  @property
+  def token(self):
+    return self.webhook._token
+
+  def send_msg(self, msg, to):
     '''
-    This class represents the bot. To keep the bot token private, the
-    execution environment has to be setup, e.g. in a local file '.env'.
-
-    Environment variables are:
-
-    TELEGRAM_BOT_TOKEN
-        the respective bot token given by BotFather
+    Sends the given message 'msg' to the user 'to', where 'to' is
+    the user's chat_id (int) or the username (string) of the target
+    channel (in the format @channelusername)
     '''
-
-    def __init__(self, token):
-        self._token = token
-
-    @property
-    def token(self):
-        '''
-        Returns the bot's token (previously set in __init__).
-        '''
-        return self._token
-
-    def send_msg(self, msg, to):
-        '''
-        Sends the given message 'msg' to the user 'to', where 'to' is
-        the user's chat_id (int) or the username (string) of the target
-        channel (in the format @channelusername)
-        '''
-        return requests.post(self.func_url("sendMessage"), data={
-            'chat_id': to,
-            'text': msg
-        })
-
-    # --- webhook ---
-
-    @property
-    def webhook_info(self):
-        '''
-        Returns the webhook info provided by Telegram Bot API in json
-        format (as python dict).
-        '''
-        return requests.get(self.func_url('getWebhookInfo')).json()
-
-    @property
-    def webhook_url(self):
-        '''
-        Returns the webhook url (string).
-        '''
-        return self.webhook_info['result']['url']
-
-    @webhook_url.setter
-    def webhook_url(self, url):
-        '''
-        Sets the webhook of this bot so incoming updates will be
-        forwarded to it.
-        '''
-        return requests.get(self.func_url('setWebhook'), data={'url': url})
-
-    def set_webhook_url_adding_token(self, url):
-        '''
-        Sets the webhook of this bot so incoming updates will be
-        forwarded to it.
-        Adds the bot's token after the given 'url'.
-        '''
-        return requests.get(self.func_url('setWebhook'), data={
-            'url': f'{url}/{self.token}'
-        })
-
-    # --- utils ---
-
-    def func_url(self, method):
-        '''
-        Helper method to access the Telegram Bot API.
-        '''
-        return "https://api.telegram.org/bot{}/{}".format(self.token, method)
+    url = self.webhook.url_for(SupportedMethod.SEND_MSG)
+    return requests.post(url, data={
+      'chat_id': to,
+      'text': msg})
 
