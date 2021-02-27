@@ -9,6 +9,7 @@ class SupportedMethod:
   SEND_MSG = 'sendMessage'
   GET_WEBHOOK_INFO = 'getWebhookInfo'
   SET_WEBHOOK = 'setWebhook'
+  DELETE_WEBHOOK = 'deleteWebhook'
 
 
 class Webhook:
@@ -51,6 +52,10 @@ class Webhook:
     '''
     api_url = self.url_for(SupportedMethod.SET_WEBHOOK)
     return requests.get(api_url, data={'url': f'{base_url}/{self.token}'})
+
+  def delete(self):
+    api_url = self.url_for(SupportedMethod.DELETE_WEBHOOK)
+    return requests.get(api_url)
 
 
 
