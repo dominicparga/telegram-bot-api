@@ -58,7 +58,6 @@ class Webhook:
     return requests.get(api_url)
 
 
-
 class Bot():
   def __init__(self, token):
     self._webhook = Webhook(token)
