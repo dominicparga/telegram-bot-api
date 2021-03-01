@@ -78,16 +78,18 @@ class Bot():
     channel (in the format @channelusername)
     '''
     url = self.webhook.url_for(SupportedMethod.SEND_MSG)
-    return requests.post(url, data=json.dumps({
+    data = json.dumps({
       'chat_id': to,
-      'text': msg}))
+      'text': msg})
+    return requests.post(url=url, data=data)
 
   def send_inline_keyboard(self, keyboard, to):
     url = self.webhook.url_for(SupportedMethod.SEND_MSG)
-    return requests.post(url, data=json.dumps({
+    data = json.dumps({
       'chat_id': to,
       'reply_markup': {
         'inline_keyboard': keyboard
       }
     })
+    return requests.post(url=url, data=data)
 
