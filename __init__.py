@@ -92,7 +92,7 @@ class Input:
 
   def __init__(self, data: dict):
     self.update_id = data.get('update_id')
-    self.message = Message.new(data.get('message'))
+    self.message = Input.Message.new(data.get('message'))
 
   def as_dict(self) -> dict:
     d = {}
@@ -109,10 +109,10 @@ class Input:
       if data is None:
         return None
       else:
-        message = Message()
+        message = Input.Message()
         message.id = data.get('message_id')
-        message.sender = Sender.new(data.get('from'))
-        message.chat = Chat.new(data.get('chat'))
+        message.sender = Input.Message.Sender.new(data.get('from'))
+        message.chat = Input.Message.Chat.new(data.get('chat'))
         message.date = data.get('date')
         message.text = data.get('text')
         return message
@@ -138,7 +138,7 @@ class Input:
         if data is None:
           return None
         else:
-          sender = Sender()
+          sender = Input.Message.Sender()
           sender.id = data.get('id')
           sender.is_bot = data.get('is_bot')
           sender.first_name = data.get('first_name')
@@ -170,7 +170,7 @@ class Input:
         if data is None:
           return None
         else:
-          chat = Chat()
+          chat = Input.Message.Chat()
           chat.id = data.get('id')
           chat.first_name = data.get('first_name')
           chat.last_name = data.get('last_name')
