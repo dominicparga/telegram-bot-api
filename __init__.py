@@ -45,14 +45,17 @@ class Webhook:
     '''
     return self.info['result']['url']
 
-  def set_url_adding_token(self, base_url):
+  def set_url_adding_token(self, base_url, certificate = None):
     '''
     Sets the webhook of this bot so incoming updates will be
     forwarded to it.
     Adds the bot's token after the given 'url'.
     '''
     api_url = self.url_for(SupportedMethod.SET_WEBHOOK)
-    return requests.get(api_url, data={'url': f'{base_url}/{self.token}'})
+    data = {'url': f'{base_url}/{self.token}'}
+    if certificate is not None:
+      data['certificate'] = certificate
+    return requests.get(api_url, data=data)
 
   def delete(self):
     api_url = self.url_for(SupportedMethod.DELETE_WEBHOOK)
