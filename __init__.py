@@ -7,16 +7,26 @@ import json
 import requests
 from . import data
 
+def check_with_exception(response):
+  if not response.ok:
+    response = response.json()
+    raise Exception('{} ({})'.format(
+      response['description'],
+      response['error_code']))
+  return response
+
 class SupportedMethod:
   SEND_MSG = 'sendMessage'
   GET_WEBHOOK_INFO = 'getWebhookInfo'
   SET_WEBHOOK = 'setWebhook'
   DELETE_WEBHOOK = 'deleteWebhook'
+  ANSWER_CALLBACK_QUERY = 'answerCallbackQuery'
 
 class Webhook:
 
-  def __init__(self, token):
+  def __init__(self, token, check_response=lambda x: x):
     self._token = token
+    self._check_response = check_response
 
   @property
   def token(self):
@@ -37,7 +47,7 @@ class Webhook:
     format (as python dict).
     '''
     url = self.url_for(SupportedMethod.GET_WEBHOOK_INFO)
-    return requests.get(url).json()
+    return self._check_response(requests.get(url).json())
 
   @property
   def url(self):
@@ -56,16 +66,17 @@ class Webhook:
     data = {'url': f'{base_url}/{self.token}'}
     if certificate is not None:
       data['certificate'] = certificate
-    return requests.get(api_url, data=data)
+    return self._check_response(requests.get(api_url, data=data))
 
   def delete(self):
     api_url = self.url_for(SupportedMethod.DELETE_WEBHOOK)
-    return requests.get(api_url)
+    return self._check_response(requests.get(api_url))
 
 class Bot():
 
-  def __init__(self, token):
-    self._webhook = Webhook(token)
+  def __init__(self, token, check_response=lambda x:x):
+    self._webhook = Webhook(token, check_response=check_response)
+    self._check_response = check_response
 
   @property
   def webhook(self):
@@ -90,5 +101,16 @@ class Bot():
       data['reply_markup'] = json.dumps({
         'inline_keyboard': inline_keyboard
       })
-    return requests.post(url=url, data=data)
+    return self._check_response(requests.post(url=url, data=data))
 
+  def answer_callback_query(
+    self, callback_query_id, text=None, is_alert_not_notification=False
+  ):
+    url = self.webhook.url_for(SupportedMethod.ANSWER_CALLBACK_QUERY)
+    data = {
+      'callback_query_id': callback_query_id,
+      'show_alert': is_alert_not_notification
+    }
+    if text is not None:
+      data['text'] = text
+    return self._check_response(requests.post(url=url, data=data))

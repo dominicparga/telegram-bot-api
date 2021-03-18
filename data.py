@@ -135,13 +135,13 @@ class CallbackQuery:
     if data is None:
       return None
     else:
-      chat = Chat()
-      chat.id = data.get('id')
-      chat.sender = User.new(data.get('from'))
-      chat.message = Message.new(data.get('message'))
-      chat.chat_instance = data.get('chat_instance')
-      chat.data = data.get('data')
-      return chat
+      callback_query = CallbackQuery()
+      callback_query.id = data.get('id')
+      callback_query.sender = User.new(data.get('from'))
+      callback_query.message = Message.new(data.get('message'))
+      callback_query.chat_instance = data.get('chat_instance')
+      callback_query.data = data.get('data')
+      return callback_query
 
   def as_dict(self):
     d = {}
