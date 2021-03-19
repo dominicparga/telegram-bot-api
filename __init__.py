@@ -64,10 +64,10 @@ class Webhook:
     Adds the bot's token after the given 'url'.
     '''
     api_url = self.url_for(SupportedMethod.SET_WEBHOOK)
-    data = {'url': f'{base_url}/{self.token}'}
+    content = {'url': f'{base_url}/{self.token}'}
     if certificate is not None:
-      data['certificate'] = certificate
-    return self._check_response(requests.get(api_url, data=data))
+      content['certificate'] = certificate
+    return self._check_response(requests.get(api_url, data=content))
 
   def delete(self):
     api_url = self.url_for(SupportedMethod.DELETE_WEBHOOK)
@@ -94,7 +94,7 @@ class Bot():
     channel (in the format @channelusername)
     '''
     url = self.webhook.url_for(SupportedMethod.SEND_MSG)
-    data = {
+    content = {
       'chat_id': to,
       'text': msg
     }
@@ -111,10 +111,10 @@ class Bot():
           else:
             new_row.append(button)
         keyboard_data.append(new_row)
-      data['reply_markup'] = json.dumps({
+      content['reply_markup'] = json.dumps({
         'inline_keyboard': keyboard_data
       })
-    return self._check_response(requests.post(url=url, data=data))
+    return self._check_response(requests.post(url=url, data=content))
 
   def answer_callback_query(
     self,
@@ -123,24 +123,24 @@ class Bot():
     is_alert_not_notification=False
   ):
     url = self.webhook.url_for(SupportedMethod.ANSWER_CALLBACK_QUERY)
-    data = {
+    content = {
       'callback_query_id': callback_query_id,
       'show_alert': is_alert_not_notification
     }
     if text is not None:
-      data['text'] = text
-    return self._check_response(requests.post(url=url, data=data))
+      content['text'] = text
+    return self._check_response(requests.post(url=url, data=content))
 
   def edit_msg_text(self, chat_id, msg_id, new_text, inline_keyboard=None):
     url = self.webhook.url_for(SupportedMethod.EDIT_MSG_TEXT)
-    data = {
+    content = {
       'chat_id': chat_id,
       'message_id': msg_id,
       'text': new_text
     }
     if inline_keyboard is not None:
-      data['reply_markup'] = json.dumps({
+      content['reply_markup'] = json.dumps({
         'inline_keyboard': inline_keyboard
       })
-    return self._check_response(requests.post(url=url, data=data))
+    return self._check_response(requests.post(url=url, data=content))
 
