@@ -5,6 +5,19 @@ implementing useful functions.
 
 import json
 
+class InlineKey:
+  def __init__(self, text, callback_data):
+    self._text = text
+    self._callback_data = callback_data
+
+  @property
+  def text(self):
+    return self._text
+
+  @property
+  def callback_data(self):
+    return self._callback_data
+
 class Update:
 
   def __init__(self, data: dict):

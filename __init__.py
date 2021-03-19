@@ -99,8 +99,20 @@ class Bot():
       'text': msg
     }
     if inline_keyboard is not None:
+      keyboard_data = []
+      for row in inline_keyboard:
+        new_row = []
+        for button in row:
+          if isinstance(button, data.InlineKey):
+            new_row.append({
+              'text': button.text,
+              'callback_data': button.callback_data
+            })
+          else:
+            new_row.append(button)
+        keyboard_data.append(new_row)
       data['reply_markup'] = json.dumps({
-        'inline_keyboard': inline_keyboard
+        'inline_keyboard': keyboard_data
       })
     return self._check_response(requests.post(url=url, data=data))
 
