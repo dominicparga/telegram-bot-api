@@ -17,10 +17,11 @@ def check_with_exception(response):
 
 class SupportedMethod:
   SEND_MSG = 'sendMessage'
+  EDIT_MSG_TEXT = 'editMessageText'
+  ANSWER_CALLBACK_QUERY = 'answerCallbackQuery'
   GET_WEBHOOK_INFO = 'getWebhookInfo'
   SET_WEBHOOK = 'setWebhook'
   DELETE_WEBHOOK = 'deleteWebhook'
-  ANSWER_CALLBACK_QUERY = 'answerCallbackQuery'
 
 class Webhook:
 
@@ -104,7 +105,10 @@ class Bot():
     return self._check_response(requests.post(url=url, data=data))
 
   def answer_callback_query(
-    self, callback_query_id, text=None, is_alert_not_notification=False
+    self,
+    callback_query_id,
+    text=None,
+    is_alert_not_notification=False
   ):
     url = self.webhook.url_for(SupportedMethod.ANSWER_CALLBACK_QUERY)
     data = {
@@ -114,3 +118,17 @@ class Bot():
     if text is not None:
       data['text'] = text
     return self._check_response(requests.post(url=url, data=data))
+
+  def edit_msg_text(self, chat_id, msg_id, new_text, inline_keyboard=None):
+    url = self.webhook.url_for(SupportedMethod.EDIT_MSG_TEXT)
+    data = {
+      'chat_id': chat_id,
+      'message_id': msg_id,
+      'text': new_text
+    }
+    if inline_keyboard is not None:
+      data['reply_markup'] = json.dumps({
+        'inline_keyboard': inline_keyboard
+      })
+    return self._check_response(requests.post(url=url, data=data))
+
